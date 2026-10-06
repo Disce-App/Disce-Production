@@ -1,4 +1,4 @@
-# AGENTS.md — Disce-Stage (public website)
+# AGENTS.md — Disce-Production (public website)
 
 Repository-specific instructions for coding agents working in this repo.
 

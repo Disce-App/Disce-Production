@@ -1,7 +1,7 @@
-# Disce-Stage — public website
+# Disce-Production — public website
 
-Public, publishable source of the DISCE website (deployed at
-`stage.weltvorstellung.de` today, `weltvorstellung.de` after the cutover).
+Public, publishable source of the DISCE website, deployed at
+**https://weltvorstellung.de**.
 
 > **This repository must contain publishable site files only.**
 > All internal planning, strategy, audit, decision and design documents live in
