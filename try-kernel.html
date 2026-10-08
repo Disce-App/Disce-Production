@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#123329">
+<title data-title-de="Kernel ausprobieren · Disce" data-title-en="Try the Kernel · Disce">Kernel ausprobieren · Disce</title>
+<script>try{if(localStorage.getItem('disce-lang')==='en'){document.documentElement.className+=' pre-en';document.documentElement.lang='en';}}catch(e){}</script>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="images/derived/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  /* Living-painting gateway. The loop sits centred on the dark Disce green +
+     strong grain, framed by a green margin that carries all the chrome (brand,
+     way back, actions). Nothing is laid over the arch, sea or desk. */
+  @font-face{font-family:'Archivo Black';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/archivo-black-400.subset.woff2') format('woff2');}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:400 800;font-display:swap;src:url('fonts/inter-var.subset.woff2') format('woff2');}
+
+  :root {
+    --paper: #F7F1E3;
+    --ink: #161210;
+    --deep: #123329;
+    --parchment: #D5C09D;
+    --ochre: #E3AF50;
+    --font-display: 'Archivo Black', 'Inter', sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --pad: clamp(16px, 3.2vmin, 40px);
+    /* Height reserved for the green header band above the painting. */
+    --band: clamp(60px, 10vmin, 96px);
+    /* The main page's paper-tooth tile. Its fleck alpha is very low, so it is
+       stacked here to read as a much stronger grain than the site default. */
+    --grain: url('images/derived/paper-grain.webp');
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-body);
+    color: var(--parchment);
+    background-color: var(--deep);
+    background-image:
+      var(--grain), var(--grain), var(--grain), var(--grain), var(--grain),
+      var(--grain), var(--grain), var(--grain), var(--grain), var(--grain),
+      var(--grain), var(--grain), var(--grain), var(--grain), var(--grain),
+      var(--grain), var(--grain), var(--grain), var(--grain), var(--grain);
+    background-repeat: repeat;
+    background-size: 192px 192px;
+    overflow: hidden;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; }
+
+  /* ---------- header band: all chrome lives on the green ---------- */
+  .gate {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    row-gap: 10px;
+    padding: clamp(16px, 2.6vmin, 30px) var(--pad) clamp(8px, 1.4vmin, 16px);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: clamp(18px, 2vmin, 23px);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--paper);
+  }
+  /* The signet is only available as dark/green artwork; on the green band it is
+     recoloured through a mask (no redraw, no new asset) to parchment. */
+  .brand-mark {
+    width: auto;
+    height: clamp(26px, 3.2vmin, 34px);
+    aspect-ratio: 468 / 411;
+    flex-shrink: 0;
+    background-color: var(--parchment);
+    -webkit-mask: url('images/antlers-black.png') center / contain no-repeat;
+    mask: url('images/antlers-black.png') center / contain no-repeat;
+    transition: background-color .12s ease;
+  }
+  .brand:hover .brand-mark { background-color: var(--ochre); }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: clamp(10px, 1.1vmin, 12px);
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--parchment);
+  }
+  .back:hover { color: var(--ochre); }
+
+  /* ---------- language toggle ----------
+     Mirrors the sitewide convention: German is the default, a stored choice
+     wins, and the preference is shared with the rest of the site. */
+  body.lang-de [data-lang="en"] { display: none; }
+  body.lang-en [data-lang="de"] { display: none; }
+  /* Before first paint no body class exists yet; html.pre-en is set by the head
+     snippet for a returning English visitor, everyone else gets German. */
+  html.pre-en body:not(.lang-de):not(.lang-en) [data-lang="de"] { display: none; }
+  html:not(.pre-en) body:not(.lang-de):not(.lang-en) [data-lang="en"] { display: none; }
+
+  .gate-right { display: inline-flex; align-items: center; gap: clamp(12px, 2vw, 22px); }
+  .lang-switch { display: inline-flex; flex: none; border: 2px solid var(--parchment); }
+  .lang-switch button {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    min-height: 26px;
+    padding: 4px 9px;
+    background: transparent;
+    color: rgba(213, 192, 157, .72);
+    border: 0;
+    cursor: pointer;
+    transition: background-color .12s ease, color .12s ease;
+  }
+  .lang-switch button + button { border-left: 2px solid var(--parchment); }
+  .lang-switch button:hover { color: var(--paper); }
+  .lang-switch button[aria-pressed="true"] { background: var(--parchment); color: var(--ink); }
+
+  /* ---------- stage / painting ---------- */
+  .stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--pad) var(--pad);
+  }
+  .frame { position: relative; line-height: 0; display: inline-block; }
+  .painting {
+    display: block;
+    width: auto;
+    height: auto;
+    /* Never upscale past the 1088px master. */
+    max-width: min(calc(100vw - 2 * var(--pad)), 1088px);
+    max-height: calc(100dvh - var(--band) - 2 * var(--pad));
+    background: var(--deep);
+    border: 1px solid rgba(213, 192, 157, 0.20);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  }
+  /* Right-hand scrim keeps the actions legible over the shelves, mirroring the
+     old left rail without ever reaching the arch, sea or desk. */
+  .frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(270deg,
+      rgba(18, 51, 41, .92) 0%, rgba(18, 51, 41, .68) 18%,
+      rgba(18, 51, 41, .20) 38%, rgba(18, 51, 41, 0) 50%);
+  }
+
+  /* ---------- action panel, mirrored to the right ---------- */
+  .panel {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    right: clamp(16px, 2.6vw, 34px);
+    transform: translateY(-50%);
+    width: clamp(180px, 20%, 238px);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: clamp(12px, 1.8vmin, 20px);
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--parchment);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: var(--ochre);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .7em;
+    padding: clamp(12px, 1.7vmin, 16px) clamp(16px, 1.9vmin, 22px);
+    font-family: var(--font-body);
+    font-size: clamp(12px, 1.3vmin, 13px);
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
+    border: 2px solid var(--parchment);
+    transition: background-color .12s ease, color .12s ease, border-color .12s ease;
+  }
+  .btn--primary { background: var(--parchment); color: var(--ink); }
+  .btn--primary:hover { background: var(--ochre); border-color: var(--ochre); }
+  .btn--secondary { background: transparent; color: var(--parchment); }
+  .btn--secondary:hover { background: var(--parchment); color: var(--ink); }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- responsive ----------
+     Portrait / narrow / short -> the panel detaches from the painting; on very
+     short landscape viewports it sits beside it on the green, otherwise below. */
+  @media (max-width: 999px), (max-height: 619px) {
+    body { overflow: auto; }
+    .stage {
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(18px, 3vmin, 30px);
+      padding-top: clamp(4px, 1vmin, 10px);
+    }
+    .frame { display: flex; flex-direction: column; align-items: center; max-width: 100%; }
+    .frame::after { display: none; }
+    .painting { max-width: 100%; max-height: min(56dvh, calc(100vw - 2 * var(--pad))); }
+    .panel { position: static; transform: none; width: 100%; max-width: 420px; gap: 14px; }
+    .panel .btn { width: 100%; }
+    .eyebrow { justify-content: center; }
+  }
+  @media (min-width: 680px) and (min-aspect-ratio: 1/1) and (max-height: 619px) {
+    body { overflow: hidden; }
+    .stage { padding-top: 0; }
+    .frame { flex-direction: row; align-items: center; gap: clamp(14px, 2.4vw, 30px); }
+    .painting {
+      max-width: calc(100vw - 2 * var(--pad) - clamp(190px, 32vw, 260px) - 40px);
+      max-height: calc(100dvh - var(--band) - 2 * var(--pad));
+    }
+    .panel { width: clamp(190px, 32vw, 260px); }
+  }
+</style>
+</head>
+<body>
+
+<h1 class="visually-hidden"><span data-lang="de">Kernel ausprobieren · Disce</span><span data-lang="en">Try the Kernel · Disce</span></h1>
+
+<header class="gate">
+  <a class="brand" href="index.html">
+    <span class="brand-mark" aria-hidden="true"></span>DISCE
+  </a>
+  <div class="gate-right">
+    <a class="back" href="index.html"><span aria-hidden="true">&larr;</span> <span data-lang="de">Startseite</span><span data-lang="en">Home</span></a>
+    <div class="lang-switch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-set-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="frame">
+    <video class="painting" src="Flux3.mp4" width="1088" height="800" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+    <div class="panel">
+      <span class="eyebrow">Disce Kernel &middot; Beta</span>
+      <a class="btn btn--primary" href="https://pilot.weltvorstellung.de/sign-in">Kernel Demo <span aria-hidden="true">&rarr;</span></a>
+      <a class="btn btn--secondary" href="waitlist.html">Beta Waitlist <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Language: German is the default, a stored choice wins. Shares the
+  // 'disce-lang' key with the rest of the site, so the choice follows the
+  // visitor across pages.
+  (function () {
+    var LANG_KEY = 'disce-lang';
+    function readLang() {
+      try { return localStorage.getItem(LANG_KEY) === 'en' ? 'en' : 'de'; }
+      catch (e) { return 'de'; }
+    }
+    function applyLang(lang) {
+      document.documentElement.classList.remove('pre-en');
+      document.body.classList.toggle('lang-en', lang === 'en');
+      document.body.classList.toggle('lang-de', lang === 'de');
+      document.documentElement.setAttribute('lang', lang);
+      document.querySelectorAll('.lang-switch button').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.setLang === lang));
+      });
+      var t = document.querySelector('title[data-title-' + lang + ']');
+      if (t) document.title = t.getAttribute('data-title-' + lang);
+    }
+    applyLang(readLang());
+    document.querySelectorAll('.lang-switch button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var lang = b.dataset.setLang;
+        try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+        applyLang(lang);
+      });
+    });
+  })();
+
+  // Background loop honours prefers-reduced-motion: pause it (and react to
+  // changes) instead of forcing continuous motion.
+  (function () {
+    var video = document.querySelector('.painting');
+    if (!video || !window.matchMedia) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function apply() {
+      if (reduce.matches) {
+        video.pause();
+      } else {
+        var p = video.play();
+        if (p && p.catch) p.catch(function () {});
+      }
+    }
+    apply();
+    if (reduce.addEventListener) reduce.addEventListener('change', apply);
+  })();
+</script>
+</body>
+</html>
