@@ -1093,6 +1093,15 @@ body:not(.page-kernel) .process-item p { grid-column: 3; max-width: none; }
   color: var(--green-dark);
   -webkit-text-stroke: 1.5px var(--legacy-ink);
 }
+.team-member-photo { display: block; width: 120px; height: 120px; }
+.team-member-photo img {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  filter: grayscale(1);
+  border: 2px solid var(--legacy-ink);
+}
 .team-member-body h3 { font-size: var(--fs-600); margin-bottom: var(--sp-12); text-transform: none; }
 .team-member-role {
   display: block;
