@@ -579,12 +579,14 @@ body:not(.page-kernel) .section-head .eyebrow { grid-area: eyebrow; }
 body:not(.page-kernel) .section-head h2 { grid-area: title; margin-bottom: 0; }
 body:not(.page-kernel) .section-head .lede { grid-area: lede; margin-bottom: 0; max-width: none; }
 body:not(.page-kernel) .section-head:not(:has(.lede)) {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "eyebrow" "title";
 }
 @media (max-width: 900px) {
   body:not(.page-kernel) .section-head {
-    grid-template-columns: 1fr;
+    /* minmax(0, …): a bare 1fr floors at the heading's min-content width, so a
+       long German compound pushed the column past narrow viewports. */
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "eyebrow" "title" "lede";
     row-gap: var(--sp-16);
   }
