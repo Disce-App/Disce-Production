@@ -1171,7 +1171,10 @@ body:not(.page-kernel) .process-item p { grid-column: 3; max-width: none; }
   height: 120px;
   object-fit: cover;
   filter: grayscale(1);
-  border: 2px solid var(--legacy-ink);
+  border-radius: 50%;
+  /* Circular crop with a 2.5pt (3.33px) linear soft edge at the rim. */
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 calc(100% - 3.33px), transparent 100%);
+  mask-image: radial-gradient(circle closest-side, #000 calc(100% - 3.33px), transparent 100%);
 }
 .team-member-body h3 { font-size: var(--fs-600); margin-bottom: var(--sp-12); text-transform: none; }
 .team-member-role {
