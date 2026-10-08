@@ -259,7 +259,7 @@ body::before {
    the self-hosted Inter/Archivo metrics: the five-item nav then fits the
    1136px content column with ~40px slack, and the desktop/mobile breakpoint
    moved to 1180 so the bar only appears when it fits at desktop spacing. */
-.nav-links { display: flex; align-items: center; gap: var(--sp-24); }
+.nav-links { display: flex; align-items: center; gap: var(--sp-24); margin-left: auto; }
 
 .nav-links a {
   font-size: var(--fs-200);
@@ -2394,8 +2394,20 @@ html:not(.pre-en) body:not(.lang-de):not(.lang-en) [data-lang="en"] { display: n
 .lang-switch button:hover { color: var(--legacy-ink); }
 .lang-switch button[aria-pressed="true"] { background: var(--legacy-ink); color: var(--cream); }
 
+/* The switch sits in the header bar as a sibling of the collapsible nav, so it
+   stays visible on mobile. Below the breakpoint it is ordered before the menu
+   toggle and pushed right: brand | DE/EN | menu. */
 @media (max-width: 1179px) {
-  .lang-switch { margin-left: 0; margin-top: var(--sp-12); }
+  .lang-switch { order: 1; margin: 0 var(--sp-12) 0 auto; }
+  .nav-toggle { order: 2; }
+}
+@media (max-width: 420px) {
+  .brand { gap: var(--sp-16); }
+  .lang-switch { margin-right: var(--sp-8); }
+}
+@media (max-width: 360px) {
+  .brand { gap: var(--sp-8); }
+  .nav-toggle { padding: var(--sp-8) var(--sp-12); }
 }
 
 /* ==========================================================================
