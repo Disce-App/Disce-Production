@@ -909,32 +909,103 @@ body:not(.page-kernel) .process-item p { grid-column: 3; max-width: none; }
 @media (max-width: 640px) { .process-item { grid-template-columns: 1fr; gap: var(--sp-40); } }
 
 /* ==========================================================================
-   MEDIA CARDS – 4:3 brand visuals in light content sections (DESIGN-BRIEF §7/§9)
-   Two-up bordered cards, square corners, no motion, no backdrop-filter. The
-   images are decorative (alt=""); the fixed aspect-ratio plus explicit
-   width/height attributes keep the grid at zero layout shift. Unlike the
-   full-bleed bands, cards get no grain overlay.
+   KERNEL GATEWAY – contained clickable card (index.html, "How it works")
+   The B03 "kernel staircase" visual is the link surface: the whole card is one
+   keyboard focus stop and its overlaid label is the accessible name. A
+   right-weighted --green-deep scrim keeps the parchment label at AA while the
+   architecture on the left stays visible, and the ~5% film grain matches the
+   hero/band print texture (DESIGN-BRIEF §7/§8). The scrim, grain and label are
+   absolutely positioned, so the card adds zero layout shift; the <picture>
+   stays in normal flow. Square corners, 2 px ink hairline, and the same
+   shadow-on-hover language as the scene/persona cards (§8): no shadow at rest,
+   a hard offset shadow and a -3px lift on pointer hover.
    ========================================================================== */
-.media-card-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--sp-24);
-  margin-top: var(--sp-48);
-}
-.media-card {
-  margin: 0;
-  background: var(--legacy-paper);
-  border: 2px solid var(--legacy-ink);
+.kernel-gateway {
+  position: relative;
+  display: block;
   overflow: hidden;
+  isolation: isolate;
+  margin-top: var(--sp-48);
+  background: var(--green-deep);
+  border: 2px solid var(--legacy-ink);
+  color: var(--parchment);
 }
-.media-card img {
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .kernel-gateway {
+    transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  }
+  .kernel-gateway:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--legacy-ink);
+  }
+  .kernel-gateway:hover .kernel-gateway-arrow {
+    transform: translateX(var(--sp-8));
+  }
+}
+.kernel-gateway picture,
+.kernel-gateway img {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
 }
-@media (max-width: 700px) { .media-card-grid { grid-template-columns: 1fr; } }
+.kernel-gateway::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(270deg, rgba(18, 51, 41, 0.80) 0%, rgba(18, 51, 41, 0.46) 42%, rgba(18, 51, 41, 0.12) 100%),
+    linear-gradient(0deg, rgba(18, 51, 41, 0.30) 0%, rgba(18, 51, 41, 0.03) 62%);
+}
+.kernel-gateway::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image: var(--grain-film);
+  opacity: var(--grain-film-opacity);
+}
+.kernel-gateway-label {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 var(--sp-40);
+}
+.kernel-gateway-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(var(--fs-800), 4.4vw, var(--fs-1100));
+  line-height: 1.06;
+  letter-spacing: -0.012em;
+  color: var(--parchment);
+  text-align: right;
+}
+.kernel-gateway-arrow {
+  width: 0.72em;
+  height: 0.72em;
+  margin-left: var(--sp-12);
+  vertical-align: -0.02em;
+  color: var(--ochre);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.kernel-gateway:focus-visible .kernel-gateway-arrow {
+  transform: translateX(var(--sp-8));
+}
+.kernel-gateway:focus-visible {
+  outline: 3px solid var(--ochre);
+  outline-offset: -3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kernel-gateway-arrow { transition: none; }
+}
+@media (max-width: 700px) {
+  .kernel-gateway-label { padding: 0 var(--sp-20); }
+}
 
 /* ==========================================================================
    IMAGE BANDS – clean full-width visuals with no overlaid copy (§7/§9)
@@ -3223,7 +3294,6 @@ body,
 .persona-card,
 .scene-card,
 .scene-plate,
-.media-card,
 .band-card,
 .team-card,
 .status-ledger,
