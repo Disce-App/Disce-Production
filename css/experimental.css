@@ -131,7 +131,9 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+/* Anchor jumps and focus scrolling stop below the 84px sticky header. */
+html { scroll-behavior: smooth; scroll-padding-top: var(--sp-100); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
   font-family: var(--font-body);
