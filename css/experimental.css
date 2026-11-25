@@ -409,9 +409,17 @@ body::before {
 
 .hero .lede { color: var(--legacy-paper); }
 
-/* Base action row (shared with kernel.html); the hero tightens it below. */
+/* Base action row (shared with kernel.html). In the hero the actions sit
+   directly below the headline and above the lede, so the claim, the action
+   and the explanation read in that order. The 8/32 margins keep the total
+   block height identical to the previous order (24+8+A+32+L). */
 .hero-actions { display: flex; gap: var(--sp-16); margin-top: var(--sp-32); flex-wrap: wrap; }
-.hero .hero-actions { gap: var(--sp-24); align-items: center; }
+.hero .hero-actions {
+  gap: var(--sp-24);
+  align-items: center;
+  margin-top: var(--sp-8);
+  margin-bottom: var(--sp-32);
+}
 
 .btn-primary, .btn-secondary {
   display: inline-block;
