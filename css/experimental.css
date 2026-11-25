@@ -2321,7 +2321,7 @@ body:has(.phil-ambient) .prose .chapter-cover + p::first-letter {
 .bg-ink *:focus-visible,
 .bg-forest *:focus-visible,
 .site-footer *:focus-visible,
-.hero-panel *:focus-visible,
+.hero *:focus-visible,
 .ticker-section *:focus-visible { outline-color: var(--legacy-paper); }
 
 /* Skip link (A11Y-05). Hidden until keyboard focus, then a clearly visible,
