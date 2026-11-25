@@ -335,6 +335,21 @@ body.page-waitlist::after {
               </div>
             </div>
 
+            <!-- Last Name (optional) -->
+            <div class="form-group" id="group-last_name">
+              <label for="last_name">
+                <span data-lang="de">Nachname</span>
+                <span data-lang="en">Last name</span>
+                <span class="label-optional">
+                  <span data-lang="de">(optional)</span>
+                  <span data-lang="en">(optional)</span>
+                </span>
+              </label>
+              <input type="text" id="last_name" name="last_name"
+                autocomplete="family-name"
+                placeholder="Müller" />
+            </div>
+
             <!-- Email -->
             <div class="form-group" id="group-email">
               <label for="email">
@@ -468,14 +483,14 @@ body.page-waitlist::after {
           </h3>
           <p class="privacy-text">
             <span data-lang="de">
-              Deine Daten (Name, E-Mail, optional Deutsch-Niveau und ein freiwilliges Freitextfeld) werden ausschließlich zum Zweck der Verwaltung deiner Interessenbekundung für die geplante Private Beta und die nächste Forschungsphase erhoben und verarbeitet. Sie werden über einen Proxy-Dienst bei Cloudflare (USA) übermittelt und bei Airtable (USA) gespeichert; eine Weitergabe zu anderen Zwecken findet nicht statt. Nach Abschluss der Interessenbekundungsphase bzw. auf Widerruf werden sie gelöscht, spätestens nach 3 Jahren.<br><br>
+              Deine Daten (Vorname, E-Mail, optional Nachname, Deutsch-Niveau und wie du von uns erfahren hast) werden ausschließlich zum Zweck der Verwaltung deiner Interessenbekundung für die geplante Private Beta und die nächste Forschungsphase erhoben und verarbeitet. Sie werden beim E-Mail-Dienst Brevo (Frankreich, EU) gespeichert; du erhältst eine Bestätigungs-E-Mail über deine Eintragung. Eine Weitergabe zu anderen Zwecken findet nicht statt. Nach Abschluss der Interessenbekundungsphase bzw. auf Widerruf werden sie gelöscht, spätestens nach 3 Jahren.<br><br>
               Du kannst deine Eintragung jederzeit widerrufen, indem du uns eine E-Mail schreibst.
               Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).<br><br>
               Verantwortlich: Bjarne Dudzus ·
               <a href="mailto:bjarne.dudzus@weltvorstellung.de">bjarne.dudzus@weltvorstellung.de</a>
             </span>
             <span data-lang="en">
-              Your data (name, email, optionally German level and a voluntary free-text field) is collected and processed solely for the purpose of managing your expression of interest in the planned private beta and the next research phase. It is transmitted via a proxy service at Cloudflare (USA) and stored at Airtable (USA); it is not shared for any other purpose. After the interest-registration phase, or upon withdrawal, it is deleted, at the latest after 3 years.<br><br>
+              Your data (first name, email, optionally last name, German level and how you heard about us) is collected and processed solely for the purpose of managing your expression of interest in the planned private beta and the next research phase. It is stored with the email service Brevo (France, EU); you will receive an email confirming your registration. It is not shared for any other purpose. After the interest-registration phase, or upon withdrawal, it is deleted, at the latest after 3 years.<br><br>
               You can withdraw your registration at any time by sending us an email.
               Legal basis: Art. 6(1)(a) GDPR (consent).<br><br>
               Responsible: Bjarne Dudzus ·
@@ -745,36 +760,43 @@ body.page-waitlist::after {
     form.setAttribute('aria-busy', 'true');   // A11Y-03
 
     // --- Build waitlist record ---
+    // Field names are Brevo contact attributes (Brevo account: contact@).
+    // Consent is enforced client-side above; Brevo sends a simple
+    // confirmation email. Consent is not stored as a separate attribute.
     const sourceChannel = form.source_channel.value.trim();
     const isEn = document.body.classList.contains('lang-en');
     const langPref = isEn ? 'English' : 'German';
 
-    const fields = {
-      'first_name':      firstName,
-      'email':           email,
-      'consent_contact': hasConsent,
-      'language_pref':   langPref,
-    };
+    const fields = new URLSearchParams({
+      'EMAIL':         email,
+      'FIRSTNAME':     firstName,
+      'LANGUAGE_PREF': langPref,
+      // Brevo's own honeypot field; must be sent empty.
+      'email_address_check': '',
+      'locale':        isEn ? 'en' : 'de',
+    });
     // Optional fields are sent only when provided, so the payload no longer
     // carries study-scheduling or qualification data (CONV-05).
-    if (level) fields['german_level'] = level;
-    if (sourceChannel) fields['source_channel'] = sourceChannel;
+    const lastName = form.last_name.value.trim();
+    if (lastName) fields.append('LASTNAME', lastName);
+    if (level) fields.append('GERMAN_LEVEL', level);
+    if (sourceChannel) fields.append('SOURCE_CHANNEL', sourceChannel);
 
     // --- Waitlist submit call ---
+    // Brevo's public form endpoint: no API key, CORS-enabled, and with
+    // ?isAjax=1 it answers JSON instead of redirecting the page.
+    const BREVO_FORM_URL =
+      'https://7215ef9a.sibforms.com/serve/MUIFAAZBi-KAgqCz5pUPF83vo3MifhhJIcWqTwzoL78dTUGANau-IlD0Or11wwRmoRcjrXH7VLOy6ws6InKMGG7jK9Rr-AostVTr86j9NOwr1zuyU5Ohsn_YoBO_fl62xo0z3-GxN1T8qpc5jAl1xVxnji1OxbZ1GantUO8URYFQsTrNjyX5bfS1AzPp4e2YHEfwt6RdRl7pnEUd-g==';
     try {
-      const response = await fetch(
-        'https://waitlist-proxy.bjarne-dudzus.workers.dev',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fields }),
-        }
-      );
+      const response = await fetch(BREVO_FORM_URL + '?isAjax=1', {
+        method: 'POST',
+        body: fields,
+      });
 
-      if (!response.ok) {
-        const errBody = await response.json().catch(() => ({}));
-        console.error('Waitlist submit error:', errBody);
-        throw new Error('API error ' + response.status);
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.success !== true) {
+        console.error('Waitlist submit error:', response.status, result);
+        throw new Error('Submit failed ' + response.status);
       }
 
       // Success! Clear busy, then reveal and focus the confirmation so a
