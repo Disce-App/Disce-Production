@@ -409,7 +409,9 @@ body::before {
 
 .hero .lede { color: var(--legacy-paper); }
 
+/* Base action row (shared with kernel.html); the hero tightens it below. */
 .hero-actions { display: flex; gap: var(--sp-16); margin-top: var(--sp-32); flex-wrap: wrap; }
+.hero .hero-actions { gap: var(--sp-24); align-items: center; }
 
 .btn-primary, .btn-secondary {
   display: inline-block;
@@ -428,12 +430,29 @@ body::before {
 .btn-secondary { background: transparent; color: var(--legacy-ink); }
 .btn-secondary:hover { background: var(--legacy-ink); color: var(--cream); }
 
-/* Hero CTA on the dark surface: labels/markup unchanged. The primary keeps
-   its ink fill; both hovers resolve to parchment rather than the bright green
-   (bright green stays a light-surface accent only, §5/§13). */
-.hero .btn-primary:hover { background: var(--parchment); color: var(--legacy-ink); }
-.hero .btn-secondary { color: var(--legacy-paper); border-color: rgba(213, 192, 157, 0.6); }
-.hero .btn-secondary:hover { background: var(--legacy-paper); color: var(--legacy-ink); }
+/* Hero CTA on the dark surface. The primary uses the ochre "spotlight"
+   surface with green-deep text (6.87:1); the 2px ink border is inherited from
+   the base rule, blends into the dark ground and only reads on the parchment
+   hover. The secondary becomes a quiet text action in the hero only — the
+   boxed treatment stays on light surfaces (cta-band, kernel, team, status).
+   The 4px block padding keeps the standalone link at a 24px+ target. */
+.hero .btn-primary { background: var(--ochre); color: var(--green-deep); }
+.hero .btn-primary:hover { background: var(--parchment); color: var(--legacy-ink); border-color: var(--legacy-ink); }
+
+.hero .btn-secondary {
+  padding: var(--sp-4) 0;
+  border: 0;
+  background: transparent;
+  color: var(--parchment);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.hero .btn-secondary:hover {
+  background: transparent;
+  color: var(--ochre);
+  text-decoration-color: var(--ochre);
+}
 
 /* ==========================================================================
    ICONS – vendored Lucide subset (images/icons/lucide, ISC/MIT)
